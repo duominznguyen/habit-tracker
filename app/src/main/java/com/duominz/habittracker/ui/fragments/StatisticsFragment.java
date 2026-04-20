@@ -19,6 +19,7 @@ import com.duominz.habittracker.data.database.AppDatabase;
 import com.duominz.habittracker.data.models.Habit;
 import com.duominz.habittracker.ui.adapters.MonthlyStatsAdapter;
 import com.duominz.habittracker.ui.adapters.WeeklyStatsAdapter;
+import com.duominz.habittracker.ui.adapters.YearlyStatsAdapter;
 import com.google.android.material.tabs.TabLayout;
 
 import java.time.DayOfWeek;
@@ -50,6 +51,13 @@ public class StatisticsFragment extends Fragment {
     private RecyclerView rvMonthlyHabits;
     private MonthlyStatsAdapter monthlyAdapter;
     private LocalDate currentMonthDate;
+
+    // Yearly Views
+    private View yearlyLayout;
+    private TextView tvYear;
+    private RecyclerView rvYearlyHabits;
+    private YearlyStatsAdapter yearlyAdapter;
+    private int currentYear;
     
     private AppDatabase db;
 
@@ -64,6 +72,7 @@ public class StatisticsFragment extends Fragment {
 
         initWeeklyViews(inflater);
         initMonthlyViews(inflater);
+        initYearlyViews(inflater);
         setupTabs();
 
         // Mặc định hiển thị Weekly
@@ -83,7 +92,7 @@ public class StatisticsFragment extends Fragment {
                 switch (tab.getPosition()) {
                     case 0: showWeeklyStats(); break;
                     case 1: showMonthlyStats(); break;
-                    default: showPlaceholder(tab.getText().toString()); break;
+                    case 2: showYearlyStats(); break;
                 }
             }
             @Override
@@ -145,6 +154,28 @@ public class StatisticsFragment extends Fragment {
         });
     }
 
+    private void initYearlyViews(LayoutInflater inflater) {
+        yearlyLayout = inflater.inflate(R.layout.layout_stats_yearly, null);
+        tvYear = yearlyLayout.findViewById(R.id.tvYear);
+        rvYearlyHabits = yearlyLayout.findViewById(R.id.rvYearlyHabits);
+
+        yearlyAdapter = new YearlyStatsAdapter();
+        rvYearlyHabits.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvYearlyHabits.setAdapter(yearlyAdapter);
+
+        currentYear = LocalDate.now().getYear();
+
+        yearlyLayout.findViewById(R.id.ivPrevYear).setOnClickListener(v -> {
+            currentYear--;
+            loadYearlyData();
+        });
+
+        yearlyLayout.findViewById(R.id.ivNextYear).setOnClickListener(v -> {
+            currentYear++;
+            loadYearlyData();
+        });
+    }
+
     private void showWeeklyStats() {
         contentPlaceholder.removeAllViews();
         contentPlaceholder.addView(weeklyLayout);
@@ -155,6 +186,12 @@ public class StatisticsFragment extends Fragment {
         contentPlaceholder.removeAllViews();
         contentPlaceholder.addView(monthlyLayout);
         loadMonthlyData();
+    }
+
+    private void showYearlyStats() {
+        contentPlaceholder.removeAllViews();
+        contentPlaceholder.addView(yearlyLayout);
+        loadYearlyData();
     }
 
     private void loadWeeklyData() {
@@ -219,11 +256,31 @@ public class StatisticsFragment extends Fragment {
         });
     }
 
-    private void showPlaceholder(String title) {
-        contentPlaceholder.removeAllViews();
-        TextView tv = new TextView(getContext());
-        tv.setText("Content for " + title + " coming soon");
-        tv.setGravity(android.view.Gravity.CENTER);
-        contentPlaceholder.addView(tv);
+    private void loadYearlyData() {
+        tvYear.setText(String.valueOf(currentYear));
+        LocalDate firstDayOfYear = LocalDate.of(currentYear, 1, 1);
+        LocalDate lastDayOfYear = LocalDate.of(currentYear, 12, 31);
+
+        Executors.newSingleThreadExecutor().execute(() -> {
+            List<Habit> allHabits = db.habitDao().getAllHabits();
+            Map<Integer, Map<String, Integer>> habitLogsMap = new HashMap<>();
+
+            for (Habit h : allHabits) {
+                Map<String, Integer> logs = new HashMap<>();
+                List<String> completed = db.habitLogDao().getCompletedDatesInRange(h.id, firstDayOfYear.toString(), lastDayOfYear.toString());
+                List<String> skipped = db.habitLogDao().getSkippedDatesInRange(h.id, firstDayOfYear.toString(), lastDayOfYear.toString());
+                
+                for (String d : completed) logs.put(d, 1);
+                for (String d : skipped) logs.put(d, 2);
+                
+                habitLogsMap.put(h.id, logs);
+            }
+
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    yearlyAdapter.setData(allHabits, currentYear, habitLogsMap);
+                });
+            }
+        });
     }
 }
