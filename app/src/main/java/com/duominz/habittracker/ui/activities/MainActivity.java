@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.duominz.habittracker.R;
 import com.duominz.habittracker.ui.fragments.AddHabitFragment;
 import com.duominz.habittracker.ui.fragments.HomeFragment;
+import com.duominz.habittracker.ui.fragments.ManageHabitsFragment;
 import com.duominz.habittracker.ui.fragments.StatisticsFragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
             else if (itemId == R.id.nav_settings) {
-                // replaceFragment(new SettingsFragment());
+                replaceFragment(new ManageHabitsFragment());
                 isAtHome = false;
                 updateHomeButton();
                 return true;

@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Select Time"
+            android:text="Chọn thời gian"
             android:textColor="#000000"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -45,7 +45,7 @@
         android:layout_height="60dp"
         android:layout_marginTop="24dp"
         android:backgroundTint="#FF5252"
-        android:text="Confirm"
+        android:text="Xác nhận"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
         android:textSize="18sp"

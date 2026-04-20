@@ -123,6 +123,11 @@ public class HomeFragment extends Fragment {
             List<Habit> filteredHabits = new ArrayList<>();
 
             for (Habit habit : allHabitsFromDb) {
+                // Nếu thói quen đã lưu trữ (Archived) thì bỏ qua, không hiển thị ở màn hình chính
+                if (habit.isArchived) {
+                    continue;
+                }
+
                 // chỉ thêm vào ds nếu đến hạn hoặc đã có log(Ví dụ: đã hoàn thành ngày hôm đó)
                 boolean isDue = habitRepository.isHabitDue(habit, date);
                 

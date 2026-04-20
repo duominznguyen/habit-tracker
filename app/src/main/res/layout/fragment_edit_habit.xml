@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chỉnh sửa thói quen"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Dòng 1: Icon và Tên -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
+            <ImageView
+                android:id="@+id/ivHabitIcon"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/bg_habit_card"
+                android:padding="16dp"
+                android:src="@drawable/ic_book"
+                android:clickable="true"
+                android:focusable="true"/>
+            <View android:layout_width="16dp" android:layout_height="0dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <EditText
+                    android:id="@+id/etHabitName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:hint="Tên thói quen"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:paddingVertical="8dp"
+                    android:inputType="textCapWords"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEEE"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Dòng 2: Chọn màu sắc -->
+        <LinearLayout
+            android:id="@+id/layoutColorPickerTrigger"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Màu sắc"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+            <View
+                android:id="@+id/viewSelectedColorPreview"
+                android:layout_width="40dp"
+                android:layout_height="24dp"
+                android:background="@drawable/bg_date_pill"
+                android:backgroundTint="#FF5252"
+                android:layout_marginEnd="8dp"/>
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_hide"
+                app:tint="#CCCCCC" />
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EEEEEE"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Dòng 3: Tần suất -->
+        <TextView
+            android:id="@+id/tvFreqLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tần suất"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"/>
+        <LinearLayout
+            android:id="@+id/layoutFreqButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+            <Button android:id="@+id/btnFreqDaily" style="?android:attr/borderlessButtonStyle" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:text="Ngày" android:textAllCaps="false" android:background="@drawable/bg_frequency_card" android:layout_marginEnd="8dp" android:textColor="#333333"/>
+            <Button android:id="@+id/btnFreqWeekly" style="?android:attr/borderlessButtonStyle" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:text="Tuần" android:textAllCaps="false" android:background="@drawable/bg_frequency_card" android:layout_marginEnd="8dp" android:textColor="#333333"/>
+            <Button android:id="@+id/btnFreqMonthly" style="?android:attr/borderlessButtonStyle" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:text="Tháng" android:textAllCaps="false" android:background="@drawable/bg_frequency_card" android:textColor="#333333"/>
+        </LinearLayout>
+
+        <!-- Container Weekly/Monthly -->
+        <LinearLayout
+            android:id="@+id/layoutWeeklySelectionContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_habit_card"
+            android:backgroundTint="#FFF5F5"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chọn ngày trong tuần"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"/>
+            <LinearLayout
+                android:id="@+id/layoutWeeklySelection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="12dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutMonthlySelectionContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_habit_card"
+            android:backgroundTint="#F0FFF4"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chọn ngày trong tháng"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMonthlyPicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:overScrollMode="never"
+                android:layout_marginBottom="5dp"/>
+            <Button
+                android:id="@+id/btnSelectAllMonthly"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chọn tất cả"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="0dp"/>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/dividerFreq"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EEEEEE"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Dòng 4: Nhắc nhở và Giờ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Thông báo nhắc nhở"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/swReminder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutTimePickerTrigger"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="16dp"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Thời gian"
+                android:textColor="#000000"
+                android:textSize="18sp" />
+            <TextView
+                android:id="@+id/tvSelectedTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="08:00"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:background="@drawable/bg_date_pill"
+                android:backgroundTint="#F5F5F5"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:layout_marginEnd="8dp"/>
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_hide"
+                app:tint="#CCCCCC" />
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EEEEEE"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Dòng 5: Habit Term -->
+        <TextView
+            android:id="@+id/tvTermLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thời gian áp dụng"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+        <LinearLayout
+            android:id="@+id/layoutTerm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/layoutStartDateTrigger"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bắt đầu"
+                    android:textColor="#666666"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:id="@+id/tvStartDateValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_date_pill"
+                    android:backgroundTint="#FF5252"
+                    android:text="2026-04-19"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+            <View android:id="@+id/dividerDate" android:layout_width="32dp" android:layout_height="1dp" android:background="#EEEEEE" android:layout_gravity="bottom" android:layout_marginBottom="20dp"/>
+            <LinearLayout
+                android:id="@+id/layoutEndDateTrigger"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kết thúc"
+                    android:textColor="#666666"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:id="@+id/tvEndDateValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_date_pill"
+                    android:backgroundTint="#FF5252"
+                    android:text="Không"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvLockedWarning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="* Tần suất và thời gian bị khóa do thói quen đã có dữ liệu lịch sử."
+            android:textColor="#FF8A80"
+            android:textSize="12sp"
+            android:visibility="gone"/>
+
+        <View android:layout_width="match_parent" android:layout_height="32dp"/>
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Lưu thay đổi"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:backgroundTint="#2196F3"
+            android:textAllCaps="false"/>
+
+    </LinearLayout>
+</ScrollView>
