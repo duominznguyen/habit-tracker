@@ -1,4 +1,4 @@
-package com.duominz.habittracker.ui.activities; // Đã chốt đúng package
+package com.duominz.habittracker.ui.activities;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,8 +12,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.duominz.habittracker.R;
 import com.duominz.habittracker.ui.fragments.AddHabitFragment;
 import com.duominz.habittracker.ui.fragments.HomeFragment;
-// import com.duominz.habittracker.ui.fragments.StatsFragment;
-// import com.duominz.habittracker.ui.fragments.SettingsFragment;
+import com.duominz.habittracker.ui.fragments.StatisticsFragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -51,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
             else if (itemId == R.id.nav_stats) {
-                // replaceFragment(new StatsFragment());
+                replaceFragment(new StatisticsFragment());
                 isAtHome = false;
                 updateHomeButton();
                 return true;
