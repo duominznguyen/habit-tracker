@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.duominz.habittracker.R;
 import com.duominz.habittracker.data.database.AppDatabase;
 import com.duominz.habittracker.data.models.Habit;
-import com.duominz.habittracker.data.models.HabitLog;
+import com.duominz.habittracker.ui.adapters.MonthlyStatsAdapter;
 import com.duominz.habittracker.ui.adapters.WeeklyStatsAdapter;
 import com.google.android.material.tabs.TabLayout;
 
@@ -42,8 +42,15 @@ public class StatisticsFragment extends Fragment {
     private RecyclerView rvWeeklyHabits;
     private WeeklyStatsAdapter weeklyAdapter;
     private ImageView[] ivBestDays = new ImageView[7];
-    
     private LocalDate currentStartOfWeek;
+
+    // Monthly Views
+    private View monthlyLayout;
+    private TextView tvMonthYear;
+    private RecyclerView rvMonthlyHabits;
+    private MonthlyStatsAdapter monthlyAdapter;
+    private LocalDate currentMonthDate;
+    
     private AppDatabase db;
 
     @Nullable
@@ -55,8 +62,9 @@ public class StatisticsFragment extends Fragment {
         tabLayoutStats = view.findViewById(R.id.tabLayoutStats);
         contentPlaceholder = view.findViewById(R.id.statsContentPlaceholder);
 
-        setupTabs();
         initWeeklyViews(inflater);
+        initMonthlyViews(inflater);
+        setupTabs();
 
         // Mặc định hiển thị Weekly
         showWeeklyStats();
@@ -72,8 +80,11 @@ public class StatisticsFragment extends Fragment {
         tabLayoutStats.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) showWeeklyStats();
-                else showPlaceholder(tab.getText().toString());
+                switch (tab.getPosition()) {
+                    case 0: showWeeklyStats(); break;
+                    case 1: showMonthlyStats(); break;
+                    default: showPlaceholder(tab.getText().toString()); break;
+                }
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {}
@@ -112,10 +123,38 @@ public class StatisticsFragment extends Fragment {
         });
     }
 
+    private void initMonthlyViews(LayoutInflater inflater) {
+        monthlyLayout = inflater.inflate(R.layout.layout_stats_monthly, null);
+        tvMonthYear = monthlyLayout.findViewById(R.id.tvMonthYear);
+        rvMonthlyHabits = monthlyLayout.findViewById(R.id.rvMonthlyHabits);
+
+        monthlyAdapter = new MonthlyStatsAdapter();
+        rvMonthlyHabits.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvMonthlyHabits.setAdapter(monthlyAdapter);
+
+        currentMonthDate = LocalDate.now().withDayOfMonth(1);
+
+        monthlyLayout.findViewById(R.id.ivPrevMonth).setOnClickListener(v -> {
+            currentMonthDate = currentMonthDate.minusMonths(1);
+            loadMonthlyData();
+        });
+
+        monthlyLayout.findViewById(R.id.ivNextMonth).setOnClickListener(v -> {
+            currentMonthDate = currentMonthDate.plusMonths(1);
+            loadMonthlyData();
+        });
+    }
+
     private void showWeeklyStats() {
         contentPlaceholder.removeAllViews();
         contentPlaceholder.addView(weeklyLayout);
         loadWeeklyData();
+    }
+
+    private void showMonthlyStats() {
+        contentPlaceholder.removeAllViews();
+        contentPlaceholder.addView(monthlyLayout);
+        loadMonthlyData();
     }
 
     private void loadWeeklyData() {
@@ -148,6 +187,33 @@ public class StatisticsFragment extends Fragment {
                             ivBestDays[i].setVisibility(dailyBest[i] ? View.VISIBLE : View.INVISIBLE);
                         }
                     });
+                });
+            }
+        });
+    }
+
+    private void loadMonthlyData() {
+        LocalDate lastDayOfMonth = currentMonthDate.with(TemporalAdjusters.lastDayOfMonth());
+        tvMonthYear.setText(currentMonthDate.format(DateTimeFormatter.ofPattern("yyyy MMM")));
+
+        Executors.newSingleThreadExecutor().execute(() -> {
+            List<Habit> allHabits = db.habitDao().getAllHabits();
+            Map<Integer, Map<String, Integer>> habitLogsMap = new HashMap<>();
+
+            for (Habit h : allHabits) {
+                Map<String, Integer> logs = new HashMap<>();
+                List<String> completed = db.habitLogDao().getCompletedDatesInRange(h.id, currentMonthDate.toString(), lastDayOfMonth.toString());
+                List<String> skipped = db.habitLogDao().getSkippedDatesInRange(h.id, currentMonthDate.toString(), lastDayOfMonth.toString());
+                
+                for (String d : completed) logs.put(d, 1);
+                for (String d : skipped) logs.put(d, 2);
+                
+                habitLogsMap.put(h.id, logs);
+            }
+
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    monthlyAdapter.setData(allHabits, currentMonthDate, habitLogsMap);
                 });
             }
         });
